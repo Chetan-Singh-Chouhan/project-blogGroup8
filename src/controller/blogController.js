@@ -16,10 +16,11 @@ const getblog = async (req,res)=>{
 
 const filter = async (req,res)=>{
     let input = req.params.author_id
-    let finder = await blogModel.find({authorid :input}).populate("author")
+    let input2 = req.params.category
+    let finder = await blogModel.find({authorid :input},{category :input2}).populate("author")
+    return res.send({content : finder})
 
 }
 
-Router.get("/getblogs",controll.getblog)
-Router.get("/getblogs/:input",controll.filter)
+module.exports.filter=filter
 module.exports.getblog=getblog
