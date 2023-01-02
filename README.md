@@ -26,7 +26,6 @@ Repository for backend cohort - Californium
 - Make sure the authorId is a valid authorId by checking the author exist in the authors collection.
 - Return HTTP status 201 on a succesful blog creation. Also return the blog document. The response should be a JSON object like [this](#successful-response-structure) 
 - Create atleast 5 blogs for each author
-
 - Return HTTP status 400 for an invalid request with a response body like [this](#error-response-structure)
 
 ### GET /blogs
