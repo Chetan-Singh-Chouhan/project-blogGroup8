@@ -1,7 +1,7 @@
 const blogModel = require("../models/blogsModel")
 // const authorModel = require("../models/authorModel")
 const getblog = async (req,res)=>{
-    let finder = await blogModel.find({deleted : false},{published :true}).populate("author")
+    let finder = await blogModel.find({deleted : false},{published :true}).populate("Author")
     if(!finder) return res.status(404).send({
         status: false,
         msg: "Blog doesnt exits in database"
@@ -20,4 +20,6 @@ const filter = async (req,res)=>{
 
 }
 
+Router.get("/getblogs",controll.getblog)
+Router.get("/getblogs/:input",controll.filter)
 module.exports.getblog=getblog
