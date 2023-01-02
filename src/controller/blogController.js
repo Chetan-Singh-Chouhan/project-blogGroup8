@@ -16,7 +16,7 @@ const getblog = async (req,res)=>{
 
 const filter = async (req,res)=>{
     let input = req.params.author_id
-    let finder = await blogModel.find({author_id :input}).populate("author")
+    let finder = await blogModel.find({authorid :input}).populate("author")
 
 }
 
