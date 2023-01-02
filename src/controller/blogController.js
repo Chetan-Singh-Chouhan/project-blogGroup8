@@ -1,5 +1,14 @@
-const blogModel = require("../models/blogsModel")
-// const authorModel = require("../models/authorModel")
+const blogModel = require("../models/blogModel")
+const authorModel = require("../models/authorModel")
+
+//CREATE
+const createblog = async function(req, res){
+  let data = req.body
+  let created = await blogModel.create(data)
+  res.send({status: true, data: created})
+}
+
+//GET
 const getblog = async (req,res)=>{
     let finder = await blogModel.find({deleted : false},{published :true}).populate("Author")
     if(!finder) return res.status(404).send({
@@ -24,3 +33,4 @@ const filter = async (req,res)=>{
 
 module.exports.filter=filter
 module.exports.getblog=getblog
+module.exports.createblog = createblog
