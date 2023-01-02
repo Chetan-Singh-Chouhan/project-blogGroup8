@@ -3,11 +3,11 @@ const bodyParser = require('body-parser');
 const route = require('./routes/route.js');
 const app = express();
 const { default : mongoose } = require('mongoose')
-mongoose.set('strictQuery', false)
+
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-mongoose.connect("mongodb+srv://Chetan_ProjectClustor:PNr1Fn8OcRu2cGmk@Project1_group8.h4p8xqh.mongodb.net/?retryWrites=true&w=majority",{useNewUrlParser:true})
+mongoose.connect("mongodb+srv://Chetan_ProjectClustor:PNr1Fn8OcRu2cGmk@project1.h4p8xqh.mongodb.net/Project1",{useNewUrlParser:true})
 .then(()=>console.log("Mongo db is connected"))
 .catch(err=>console.log(err))
 app.use('/', route);
