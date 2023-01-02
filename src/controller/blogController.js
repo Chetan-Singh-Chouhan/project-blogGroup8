@@ -1,11 +1,7 @@
 const blogModel = require("../models/blogsModel")
 // const authorModel = require("../models/authorModel")
 
-const createBlog = async (req,res)=>{
-    let input  = req.body
-    let creation = await blogModel.create(input)
-   return res.send({contentCreated : creation})
-}
+
 
 
 const getblog = async (req,res)=>{
