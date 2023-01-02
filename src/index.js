@@ -7,7 +7,7 @@ mongoose.set('strictQuery', false)
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-mongoose.connect("mongodb+srv://Chetan-functionUp:9EFNNLl4q6IIvejN@cluster0.evsfgyx.mongodb.net/Poject1_Group8?retryWrites=true&w=majority",{useNewUrlParser:true})
+mongoose.connect("mongodb+srv://Teju-Function-Up:rrmWo64wP301WL4O@cluster0.zut3sol.mongodb.net/project1",{useNewUrlParser:true})
 .then(()=>console.log("Mongo db is connected"))
 .catch(err=>console.log(err))
 app.use('/', route);
