@@ -1,13 +1,13 @@
 
-const blogModel = require("../models/blogsModel")
+const blogModel = require("../models/blogModel")
 // const authorModel = require("../models/authorModel")
 
 
 
 
 
-const blogModel = require("../models/blogModel")
-const authorModel = require("../models/authorModel")
+// const blogModel = require("../models/blogModel")
+// const authorModel = require("../models/authorModel")
 
 //CREATE
 const createblog = async function(req, res){
@@ -18,8 +18,8 @@ const createblog = async function(req, res){
 
 //GET
 
-const getblog = async (req,res)=>{
-    let finder = await blogModel.find({deleted : false},{published :true}).populate("Author")
+const getblog = async (req,res)=> {
+    let finder = await blogModel.find({isDeleted : false},{isPublished :true}).populate("authorId") 
     if(!finder) return res.status(404).send({
         status: false,
         msg: "Blog doesnt exits in database"
@@ -35,11 +35,11 @@ const getblog = async (req,res)=>{
 const filter = async (req,res)=>{
     let input = req.params.author_id
     let input2 = req.params.category
-    let finder = await blogModel.find({authorid :input},{category :input2}).populate("author")
+    let finder = await blogModel.find({authorId :input},{category :input2}).populate("authorId")
     return res.send({content : finder})
 
 }
-module.exports.createBlog=createBlog
+// module.exports.createblog=createblog
 module.exports.filter=filter
 module.exports.getblog=getblog
 module.exports.createblog = createblog
