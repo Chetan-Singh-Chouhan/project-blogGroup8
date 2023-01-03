@@ -11,9 +11,14 @@ const blogModel = require("../models/blogModel")
 
 //CREATE
 const createblog = async function(req, res){
+  try{
   let data = req.body
   let created = await blogModel.create(data)
   res.send({status: true, data: created})
+  }
+  catch(err){
+    res.send(err.message)
+  }
 }
 
 //GET
