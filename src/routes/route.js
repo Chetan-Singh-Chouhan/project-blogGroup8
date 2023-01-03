@@ -6,9 +6,9 @@ const blogController = require("../controller/blogController")
 const middleware = require("../middleware/middleware")
 router.post("/createAuthor", authorController.createAuthor)
 router.post("/createblog",middleware.isValidAuthor,blogController.createblog)
-router.get("/getBlogs",blogController.getblog)
+router.get("/getBlogs",middleware.isValidAuthor,blogController.getblog)
 router.delete("/blogs/:blogId",blogController.isdeletebyId)
 
-
   
+   
 module.exports=router

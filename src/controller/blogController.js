@@ -34,32 +34,17 @@ const getblog = async (req,res)=> {
       })
        return res.status(200).send({
         status: true,
-        data: 
+        data:  
            finder
         
       })
 } 
 
 const isdeletebyId=async function(req,res){
-  let blogbyId=req.param.blogbyId
-   if(!blogbyId){
-    return res.send({status:false,msg:"blogId is invalid"})
-   }
+  let blogId=req.params.blogId
+  let finder = await blogModel.findById(blogId)
+  if(!finder)return res.send(400).send({error : "BlogId doesnt exist in database"})
 
-    let findBlogId=await blogModel.findOne({_id: blogbyId, isdeleted:false})
-    if(!findBlogId){
-      return res.send({status:false,msg:"findBlogId is invalid"})
-    }
-
-
-    let date =new Data()
-
-    let isdeleted=await blogModel.findOneAndUpdate({_id:blogbyId,isdeleted:false},{$set:{isdeleted:true,deletedAt:date}},{new:true})
-
-    res.send({satus:true,msg:isdeleted})
-
-
-   
 }
 
 

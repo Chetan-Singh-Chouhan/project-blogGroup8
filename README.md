@@ -18,7 +18,7 @@ Repository for backend cohort - Californium
 
 ### Author APIs /authors
 - Create an author - atleast 5 authors
-- Create a author document from request body.
+- Create a author documeauthorsnt from request body.
   `Endpoint: BASE_URL/authors`
 
 ### POST /blogs
