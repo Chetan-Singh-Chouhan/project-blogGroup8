@@ -35,9 +35,31 @@ const getblog = async (req,res)=> {
       })
 } 
 
+const isdeletebyId=async function(req,res){
+  let blogbyId=req.param.blogbyId
+   if(!blogbyId){
+    return res.send({status:false,msg:"blogId is invalid"})
+   }
+
+    let findBlogId=await blogModel.findOne({_id: blogbyId, isdeleted:false})
+    if(!findBlogId){
+      return res.send({status:false,msg:"findBlogId is invalid"})
+    }
+
+
+    let date =new Data()
+
+    let isdeleted=await blogModel.findOneAndUpdate({_id:blogbyId,isdeleted:false},{$set:{isdeleted:true,deletedAt:date}},{new:true})
+
+    res.send({satus:true,msg:isdeleted})
+
+
+   
+}
 
 
 // module.exports.createblog=createblog
 
 module.exports.getblog=getblog
 module.exports.createblog = createblog 
+module.exports.isdeletebyId=isdeletebyId
