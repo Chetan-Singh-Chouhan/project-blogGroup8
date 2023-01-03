@@ -2,11 +2,10 @@
   "dependencies": {
     "express": "^4.18.2",
     "mongoose": "^6.8.2",
-<<<<<<< HEAD
-    "node": "^19.3.0"
-=======
+
     "node": "^19.3.0",
+
+  
     "nodemon": "^2.0.20"
->>>>>>> c29a95eb39a55fe57399e84a37a2369a3b24bcb5
-  }
+}
 }
