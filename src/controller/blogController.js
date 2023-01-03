@@ -34,12 +34,6 @@ const getblog = async (req,res)=> {
       })
 } 
 
-const isdeletebyId=async function(req,res){
-  let blogId=req.params.blogId
-  let finder = await blogModel.findById(blogId)
-  if(!finder)return res.send(400).send({error : "BlogId doesnt exist in database"})
-
-}
 //updating blog data 
 const updateBlogData = async function(req,res){
   try
@@ -75,6 +69,57 @@ const updateBlogData = async function(req,res){
  }
 }
 
+// delete blog
+
+const isdeletebyId=async function(req,res){
+
+  try{
+  let blogId=req.params.blogId
+   //console.log(blogbyId)
+   if(!blogId){
+    return res.status(400).send({status:false,msg:"blogId is invalid"})
+   }
+
+    let findBlogId=await blogModel.findById({_id: blogId, isDeleted:false})
+    if(!findBlogId){
+      return res.status(404).send({status:false,msg:"findBlogId is invalid"})
+    }
+
+
+    let date =new Date()
+
+    let isdeleted=await blogModel.findOneAndUpdate({_id:blogId,isDeleted:false},{$set:{isDeleted:true,deletedAt:date}},{new:true})
+
+    res.status(201).send({satus:true,msg:isdeleted})
+  }
+  catch(error){
+    return res.status(500).send("Error msg:", error.message)
+  }
+
+
+   
+}
+
+
+
+// const deletebyquery=async function(req,res){
+//   const dataquery=req.query
+//   let filter={...dataquery}
+
+//   //let {category, authorid, tag, subcategory, unpublished}=dataquery
+//   const datatodelete=await blogModel.findOne(filter)
+//   if(!datatodelete){
+//     return res.send({status:false,msg:nomatching})
+//   }
+//   if(datatodelete.isDeleted===true){
+//     return res.send({status:false,msg:alreadydelete})
+//   }
+//   let blogId=datatodelete._id
+
+//   let deleteblog=await blogModel.findOneAndUpdate(filter,{$set:{isDeleted:true,deletedAt:new Date()}},{new:true,upsert:true})
+
+//   return res.send({status:true,msg:deleteblog})
+// }
 
 
 // module.exports.createblog=createblog
