@@ -40,4 +40,4 @@ const getblog = async (req,res)=> {
 // module.exports.createblog=createblog
 
 module.exports.getblog=getblog
-module.exports.createblog = createblog
+module.exports.createblog = createblog 
