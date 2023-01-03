@@ -102,24 +102,24 @@ const isdeletebyId=async function(req,res){
 
 
 
-// const deletebyquery=async function(req,res){
-//   const dataquery=req.query
-//   let filter={...dataquery}
+const deletebyquery=async function(req,res){
+  const dataquery=req.query
+  let filter={...dataquery}
 
-//   //let {category, authorid, tag, subcategory, unpublished}=dataquery
-//   const datatodelete=await blogModel.findOne(filter)
-//   if(!datatodelete){
-//     return res.send({status:false,msg:nomatching})
-//   }
-//   if(datatodelete.isDeleted===true){
-//     return res.send({status:false,msg:alreadydelete})
-//   }
-//   let blogId=datatodelete._id
+  //let {category, authorid, tag, subcategory, unpublished}=dataquery
+  const datatodelete=await blogModel.findOne(filter)
+  if(!datatodelete){
+    return res.send({status:false,msg:"nomatching"})
+  }
+  if(datatodelete.isDeleted===true){
+    return res.send({status:false,msg:"alreadydelete"})
+  }
+  let blogId=datatodelete._id
 
-//   let deleteblog=await blogModel.findOneAndUpdate(filter,{$set:{isDeleted:true,deletedAt:new Date()}},{new:true,upsert:true})
+  let deleteblog=await blogModel.findOneAndUpdate(filter,{$set:{isDeleted:true,deletedAt:new Date()}},{new:true,upsert:true})
 
-//   return res.send({status:true,msg:deleteblog})
-// }
+  return res.send({status:true,msg:deleteblog})
+}
 
 
 // module.exports.createblog=createblog
@@ -128,3 +128,4 @@ module.exports.getblog=getblog
 module.exports.createblog = createblog 
 module.exports.isdeletebyId=isdeletebyId
 module.exports.updateBlogData = updateBlogData
+module.exports.deletebyquery=deletebyquery
