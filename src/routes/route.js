@@ -9,7 +9,7 @@ router.post("/createAuthor", authorController.createAuthor)
 router.post("/createblog", middleware.isValidAuthor, middleware.validToken,blogController.createblog)
 router.get("/getBlogs",middleware.isValidAuthor,blogController.getblog)
 router.delete("/blogs/:blogId",blogController.deleteByParams)
-router.delete("/blogs",blogController.deletebyquery)
+router.delete("/blogs",blogController.deleteByQuery)
 router.put("/blogs/:blogId",blogController.updateBlogData)
 router.get("/login", middleware.loginUser, authorController.loginUser)
 
