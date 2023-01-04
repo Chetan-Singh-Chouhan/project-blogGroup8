@@ -1,40 +1,72 @@
-// const blogModel = require("../models/blogModel")
-const authorModel = require("../models/authorModel")
 const jwt = require("jsonwebtoken")
+const blogModel = require("../models/blogModel")
 
-const isValidAuthor = async function(req,res,next){
-try{
-    let authorId = req.body.authorId
-let finder =await authorModel.findById(authorId)
-// console.log(finder)
-if(!finder)return res.status(404).send({error : "Author doenst exist"})
+const mongoose = require('mongoose');
+
+
+const authentication = function (req, res, next) {
+
+    try {
+        let token = req.headers['x-api-key']
+        if (!token) return res.status(404).send({ status:false , message : "Token is not present in header"})
+
+        
+        let payloadData ;
+        // console.log(token)
+        let verifytoken = jwt.verify( token, "projectsecretcode" , function(err , decoded){
+            if(err) return res.status(401).send({status : false , message : "Authentication failed."})
+            else{
+
+                payloadData = decoded
+            }
+        })
+        next()
+
+    } catch (err) {
+        res.status(500).send({ status: false, msg: err.message })
+    }   
+//
 }
-catch{
-    res.send({error : "Author doenst exist"})
-}  
-next()
-}
-
-const validToken = async function(req, res, next){
-    let token = req.headers["x-api-key"];
-    if (!token) return res.send({ status: false, msg: "Token must be present" });
-  
-    let decodedToken = jwt.verify(token, "group-8-project-secret-key");
-    if (!decodedToken)
-      return res.send({ status: false, msg: "Token is Invalid" });
-      next()
-}
 
 
-const loginUser = async function (req, res, next) {
-    let userName = req.body.emailId
-    let password = req.body.password
-    let user = await authorModel.findOne({ emailId: userName, password: password })
-    if (!user) {
-      return res.send({ status: false, msg: "Invalid User Name or Password" })
+
+
+const authorisation = async function (req, res, next) {
+
+
+    try {
+
+        let tokenAuthorId = req.tokenAuthorId
+        let blogId = req.params.blogId
+        
+        // console.log(tokenAuthorId)
+        // console.log()
+        if (!mongoose.Types.ObjectId.isValid(blogId)) return res.status(400).send({ Status: false, msg: "Invalid Blog Id." })
+
+        let blogData = await blogModel.findById(blogId)
+
+        if(! blogData ) return res.status(400).send({status : false , msg :"BlogId is not exist in DB."})
+
+        // console.log(blogData)
+
+        let authorInBlog = blogData.authorId
+
+        // console.log(authorInBlog, blogData.authorId)
+
+        if (authorInBlog.toString() !== tokenAuthorId.toString()) return res.status(403).send({ status: false, msg: "Unauthorize person " })
+
+
+        next()
+
+    } catch (err) { 
+        // console.log(err.message)
+        res.status(500).send({ status: false, msg: err.message })
     }
-    next()
-  }
-module.exports.isValidAuthor = isValidAuthor  
-module.exports.validToken = validToken
-module.exports.loginUser = loginUser
+
+
+}
+
+
+
+module.exports.authorisation=authorisation
+module.exports.authentication=authentication
