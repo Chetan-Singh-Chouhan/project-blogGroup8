@@ -71,39 +71,36 @@ const updateBlogData = async function(req,res){
 
 // delete blog
 
-const isdeletebyId=async function(req,res){
+const deleteByParams = async function (req, res) {
+  try {
 
-  try{
-  let blogId=req.params.blogId
-   //console.log(blogbyId)
-   if(!blogId){
-    return res.status(400).send({status:false,msg:"blogId is invalid"})
-   }
-
-    let findBlogId=await blogModel.findById({_id: blogId, isDeleted:false})
-    if(!findBlogId){
-      return res.status(404).send({status:false,msg:"findBlogId is invalid"})
-    }
+      let userId = req.params.blogId;
+      let checkBlog = await blogModel.findById(userId)
 
 
-    let date =new Date()
+      if (checkBlog.isDeleted == true)
+          return res.status(400).send({ status: false, msg: "blog is already deleted...!" })
 
-    let isdeleted=await blogModel.findOneAndUpdate({_id:blogId,isDeleted:false},{$set:{isDeleted:true,deletedAt:date}},{new:true})
 
-    res.status(201).send({satus:true,msg:isdeleted})
+          let deleteBlog = await blogModel.findOneAndUpdate(
+              { _id: userId },
+              { $set: { isDeleted: true, deletedAt: new Date() } },
+              { new: true }
+          );
+
+         return res.status(201).send({ status: true, data: deleteBlog })
+
+
+  } catch (err) {
+     return res.status(500).send({ status: false, msg: err.message })
   }
-  catch(error){
-    return res.status(500).send("Error msg:", error.message)
-  }
 
-
-   
 }
 
 const deletebyquery=async function(req,res){
   try{
     const dataquery=req.query
-    console.log(dataquery)
+    //console.log(dataquery)
     //let {category, authorid, tag, subcategory, unpublished}=dataquery
     const datatodelete=await blogModel.findOne(dataquery)
     if(!datatodelete){
@@ -112,7 +109,7 @@ const deletebyquery=async function(req,res){
     if(datatodelete.isDeleted===true){
       return res.status(403).send({status:false,msg:"alreadydelete"})
     }
-    let blogId=datatodelete._id
+    //let blogId=datatodelete._id
   
     let deleteblog=await blogModel.findOneAndUpdate(dataquery,{$set:{isDeleted:true,deletedAt:new Date()}},{new:true,upsert:true})
   
@@ -128,6 +125,6 @@ const deletebyquery=async function(req,res){
 
 module.exports.getblog=getblog
 module.exports.createblog = createblog 
-module.exports.isdeletebyId=isdeletebyId
+module.exports.deleteByParams=deleteByParams
 module.exports.updateBlogData = updateBlogData
 module.exports.deletebyquery=deletebyquery
