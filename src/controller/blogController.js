@@ -100,12 +100,10 @@ const isdeletebyId=async function(req,res){
    
 }
 
-
-
 const deletebyquery=async function(req,res){
   try{
     const dataquery=req.query
-  
+    console.log(dataquery)
     //let {category, authorid, tag, subcategory, unpublished}=dataquery
     const datatodelete=await blogModel.findOne(dataquery)
     if(!datatodelete){
