@@ -3,7 +3,6 @@ const bodyParser = require('body-parser');
 const route = require('./routes/route.js');
 const app = express();
 const { default : mongoose } = require('mongoose');
-const { strict } = require('assert');
 mongoose.set("strictQuery", false)
 
 app.use(bodyParser.json());

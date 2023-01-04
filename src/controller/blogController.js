@@ -1,6 +1,7 @@
 
 const blogModel = require("../models/blogModel")
 let moment = require('moment')
+const { isValidObjectId } = require("mongoose")
 let date = new Date()
 
 //CREATE
@@ -75,9 +76,13 @@ const deleteByParams = async function (req, res) {
   try {
 
       let userId = req.params.blogId;
+      if(!isValidObjectId(userId))
+        return res.status(400).send({status:false,msg:"This is not valid objectId"})
+      
       let checkBlog = await blogModel.findById(userId)
-
-
+       if(!userId)
+        return res.status(400).send({status:false,msg:"userId not found"})
+      
       if (checkBlog.isDeleted == true)
           return res.status(400).send({ status: false, msg: "blog is already deleted...!" })
 
@@ -88,7 +93,7 @@ const deleteByParams = async function (req, res) {
               { new: true }
           );
 
-         return res.status(201).send({ status: true, data: deleteBlog })
+         return res.status(200).send({ status: true, data: deleteBlog })
 
 
   } catch (err) {
@@ -97,28 +102,32 @@ const deleteByParams = async function (req, res) {
 
 }
 
-const deletebyquery=async function(req,res){
-  try{
-    const dataquery=req.query
-    //console.log(dataquery)
-    //let {category, authorid, tag, subcategory, unpublished}=dataquery
-    const datatodelete=await blogModel.findOne(dataquery)
-    if(!datatodelete){
-      return res.status(404).send({status:false,msg:"nomatching"})
-    }
-    if(datatodelete.isDeleted===true){
-      return res.status(403).send({status:false,msg:"alreadydelete"})
-    }
-    //let blogId=datatodelete._id
-  
-    let deleteblog=await blogModel.findOneAndUpdate(dataquery,{$set:{isDeleted:true,deletedAt:new Date()}},{new:true,upsert:true})
-  
-    return res.status(201).send({status:true,msg:deleteblog})
+
+const deleteByQuery = async function (req, res) {
+  try {
+
+      let data = req.query
+      //console.log(data)
+      let checkBlog = await blogModel.findOne(data)
+
+      if(!checkBlog)
+        return res.status(404).send({status:false,msg:"Data is nomatching"})
+
+      if (checkBlog.isDeleted == true)
+          return res.status(400).send({ status: false, msg: "blog is already deleted" })
+
+          let deleteBlog = await blogModel.findOneAndUpdate(
+               data,
+              { $set: { isDeleted: true, deletedAt: new Date() } },
+              { new: true,upsert:true}
+          );
+
+         return res.status(200).send({ status: true, data: deleteBlog })
+
+
+  } catch (err) {
+     return res.status(500).send({ status: false, msg: err.message })
   }
-  catch(error){
-    res.status(500).send("error",error.message)
-  }
-  
 
 }
 
@@ -127,4 +136,4 @@ module.exports.getblog=getblog
 module.exports.createblog = createblog 
 module.exports.deleteByParams=deleteByParams
 module.exports.updateBlogData = updateBlogData
-module.exports.deletebyquery=deletebyquery
+module.exports.deleteByQuery=deleteByQuery
