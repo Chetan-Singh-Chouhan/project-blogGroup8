@@ -34,12 +34,16 @@ const getblog = async (req,res)=> {
       })
 } 
 
+//DELETE
+
 const isdeletebyId=async function(req,res){
   let blogId=req.params.blogId
   let finder = await blogModel.findById(blogId)
   if(!finder)return res.send(400).send({error : "BlogId doesnt exist in database"})
 
 }
+
+//UPDATE
 //updating blog data 
 const updateBlogData = async function(req,res){
   try

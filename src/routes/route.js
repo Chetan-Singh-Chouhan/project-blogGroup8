@@ -11,6 +11,4 @@ router.get("/getBlogs",middleware.isValidAuthor,blogController.getblog)
 router.delete("/blogs/:blogId",blogController.isdeletebyId)
 router.put("/blogs/:blogId",blogController.updateBlogData)
 
-  
-   
 module.exports=router
