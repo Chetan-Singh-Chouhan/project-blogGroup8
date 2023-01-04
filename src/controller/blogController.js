@@ -34,6 +34,16 @@ const getblog = async (req,res)=> {
       })
 } 
 
+//DELETE
+
+const isdeletebyId=async function(req,res){
+  let blogId=req.params.blogId
+  let finder = await blogModel.findById(blogId)
+  if(!finder)return res.send(400).send({error : "BlogId doesnt exist in database"})
+
+}
+
+//UPDATE
 //updating blog data 
 const updateBlogData = async function(req,res){
   try
@@ -69,21 +79,6 @@ const updateBlogData = async function(req,res){
  }
 }
 
-// delete blog
-
-const isdeletebyId=async function(req,res){
-
-  try{
-  let blogId=req.params.blogId
-   //console.log(blogbyId)
-   if(!blogId){
-    return res.status(400).send({status:false,msg:"blogId is invalid"})
-   }
-
-    let findBlogId=await blogModel.findById({_id: blogId, isDeleted:false})
-    if(!findBlogId){
-      return res.status(404).send({status:false,msg:"findBlogId is invalid"})
-    }
 
 
     let date =new Date()
@@ -130,4 +125,3 @@ module.exports.getblog=getblog
 module.exports.createblog = createblog 
 module.exports.isdeletebyId=isdeletebyId
 module.exports.updateBlogData = updateBlogData
-module.exports.deletebyquery=deletebyquery
