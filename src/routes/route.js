@@ -9,6 +9,7 @@ router.post("/createAuthor", authorController.createAuthor)
 router.post("/createblog",middleware.isValidAuthor,blogController.createblog)
 router.get("/getBlogs",middleware.isValidAuthor,blogController.getblog)
 router.delete("/blogs/:blogId",blogController.isdeletebyId)
+router.delete("/blogs",blogController.deletebyquery)
 router.put("/blogs/:blogId",blogController.updateBlogData)
 
 module.exports=router
