@@ -1,4 +1,5 @@
 const authorModel = require("../models/authorModel")
+const jwt = require("jsonwebtoken")
 
 const createAuthor = async function(req, res){
     let data = req.body
@@ -13,8 +14,17 @@ const createAuthor = async function(req, res){
     let created = await authorModel.create(data)
     res.send({status: true, data: created})
 }
-
-
+const loginUser = async function(req, res){
+    let data = authorModel.findById({emailId: req.body.emailId})
+    let token = jwt.sign(
+    {
+      userId: data._id
+    },
+    "group-8-project-secret-key"
+  )
+  res.send({ status: true, data: token });
+}
 
 module.exports.createAuthor = createAuthor
+module.exports.loginUser = loginUser
 
