@@ -32,16 +32,16 @@ const createAuthor = async function(req, res){
     let created = await authorModel.create(data)
     res.send({status: true, data: created})
 }
-const loginUser = async function(req, res){
-    let data = authorModel.findById({emailId: req.body.emailId})
-    let token = jwt.sign(
-    {
-      userId: data._id
-    },
-    "projectsecretcode"
-  )
-  res.send({ status: true, data: token });
+const loginAuthor = async function(req,res){
+    
+  let isAuthorExist = await authorModel.findOne({email:req.body.email,password:req.body.password})
+  // console.log(isAuthorExist)
+  if(isAuthorExist){
+      let token = jwt.sign({authorId:isAuthorExist._id},'myProject1SecretKey')
+      res.send({status:true,data:token})
+  }
+  else res.status(401).send(" Your Email ID And Password are not valid")
 }
 
 module.exports.createAuthor = createAuthor
-module.exports.loginUser = loginUser
+module.exports.loginAuthor = loginAuthor

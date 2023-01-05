@@ -26,7 +26,7 @@ const createblog = async function(req, res){
 
 //GET
 
-const getblog = async (req,res)=> {
+const getblog = async function(req,res){
 
     let data = req.query
     
@@ -82,31 +82,27 @@ const updateBlogData = async function(req,res){
 
 const deleteByParams = async function (req, res) {
   try {
-
-      let userId = req.params.blogId;
-      if(!isValidObjectId(userId))
-        return res.status(400).send({status:false,msg:"This is not valid objectId"})
-      
-      let checkBlog = await blogModel.findById(userId)
-       if(!userId)
-        return res.status(400).send({status:false,msg:"userId not found"})
-      
-      if (checkBlog.isDeleted == true)
-          return res.status(400).send({ status: false, msg: "blog is already deleted...!" })
-
-
-          let deleteBlog = await blogModel.findOneAndUpdate(
-              { _id: userId },
-              { $set: { isDeleted: true, deletedAt: new Date() } },
-              { new: true }
-          );
-
-         return res.status(200).send({ status: true, data: deleteBlog })
+        let userId = req.params.blogId;
+        if(!isValidObjectId(userId))
+          return res.status(400).send({status:false,msg:" Please Enter Correct valid objectId"})
+        let checkBlog = await blogModel.findById(userId)
+        if(!userId)
+          return res.status(400).send({status:false,msg:"userId not found"})
+        if (checkBlog.isDeleted == true)
+          return res.status(404).send({ status:false,msg: "blog is already deleted...!" })
+        let deleteBlog = await blogModel.findOneAndUpdate(
+            { _id: userId },
+            { $set: { isDeleted: true, deletedAt: new Date() } },
+            { new: true }
+        );
+          return res.status(200).send({ status: true, data: deleteBlog })
 
 
-  } catch (err) {
-     return res.status(500).send({ status: false, msg: err.message })
-  }
+      }
+      catch(err)
+      {
+          return res.status(500).send({ status: false, msg: err.message })
+      }
 
 }
 
