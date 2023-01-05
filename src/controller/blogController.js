@@ -8,6 +8,16 @@ let date = new Date()
 const createblog = async function(req, res){
   try{
   let data = req.body
+  const{title,body,authorId,tags,category,subcategory,isDeleted,isPublished} = req.body
+    if(!title) return res.status(400).send({status: false, msg:"title is required"})
+    if(!body) return res.status(400).send({status: false, msg:"body is required"})
+    if(!authorId) return res.status(400).send({status: false, msg:"authorId is required"})
+    if(!tags) return res.status(400).send({status: false, msg:"tags is required"})
+    if(!category) return res.status(400).send({status: false, msg:"category is required"})
+    if(!subcategory) return res.status(400).send({status: false, msg:"subcategory is required"})
+    // if(!isDeleted) return res.status(400).send({status: false, msg:"isDeleted is required"})
+    // if(!isPublished) return res.status(400).send({status: false, msg:"isPublished is required"})
+
   let created = await blogModel.create(data)
   res.send({status: true, data: created})
   }
