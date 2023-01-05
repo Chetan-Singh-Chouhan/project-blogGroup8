@@ -1,83 +1,114 @@
-
 const blogModel = require("../models/blogModel")
 let moment = require('moment')
 const { isValidObjectId } = require("mongoose")
-let date = new Date()
+const authorModel = require("../models/authorModel")
 
-//CREATE
+
+//=========================CREATE the blogs
 const createblog = async function(req, res){
   try{
-  let data = req.body
-  const{title,body,authorId,tags,category,subcategory} = req.body
+    let data = req.body
+    const{title,body,authorId,tags,category,subcategory} = req.body
     if(!title) return res.status(400).send({status: false, msg:"title is required"})
     if(!body) return res.status(400).send({status: false, msg:"body is required"})
     if(!authorId) return res.status(400).send({status: false, msg:"authorId is required"})
     if(!tags) return res.status(400).send({status: false, msg:"tags is required"})
     if(!category) return res.status(400).send({status: false, msg:"category is required"})
     if(!subcategory) return res.status(400).send({status: false, msg:"subcategory is required"})
-
-  let created = await blogModel.create(data)
-  res.send({status: true, data: created})
+    if(!isValidObjectId(authorId)) res.status(400).send({status:false,msg:"Author id is not Valid"})
+    const isAuthorIdValid = await authorModel.findById(authorId).count()
+    if(isAuthorIdValid==0){
+      res.status(404).send({status:false,msg:"Author id doesnt Exist"})
+    }
+    let created = await blogModel.create(data)
+    res.send({status: true, data: created})
   }
   catch(err){
-    res.send(err.message)
+    res.status(500).send(err.message)
   }
 }
 
-//GET
+//============================ GET the blogs
 
 const getblog = async function(req,res){
-
-    let data = req.query
+    const {authorId,category,tags,subcategory} = req.query
+    if(!authorId && !category && !tags && !subcategory)
+    {
+      let blogData = await blogModel.find({isDeleted : false , isPublished :true,})
+      if(!blogData) 
+        return res.status(404).send({
+          status: false,
+          msg: "Blog doesnt exits in database"
+        })
+      return res.status(200).send({ status: true,data:blogData})
+    }
+    const blogData =await blogModel.find({$or:[{authorId:authorId},{category:category},{tags:tags},{subcategory:subcategory}]})
+    if(!blogData) 
+        return res.status(404).send({
+          status: false,
+          msg: "Blog doesnt exits in database"
+        })
+    return res.status(200).send({ status: true,data:blogData})
     
-    let finder = await blogModel.find({isDeleted : false , isPublished :true,...data})
-    if(finder.length==0) return res.status(404).send({
-        status: false,
-        msg: "Blog doesnt exits in database"
-      })
-       return res.status(200).send({
-        status: true,
-        data:  
-           finder
-        
-      })
-} 
+  } 
 
 //updating blog data 
 const updateBlogData = async function(req,res){
   try
   {    
-       
-      // checking if there is data in request's body or not
-       if(Object.keys(req.body).length != 0) 
+       const {title,body,tags,subcategory} = req.body
+       if(Object.keys(req.body).length != 0) // checking if there is data in request's body or not
        {
            blogId = req.params.blogId //storing blog id into variable
            let blogIDExist = await blogModel.findById(blogId) //validation - if user id valid or not
            //checking if user is deleted or not
-           if(blogIDExist.isDeleted==true) res.status(400).send({status:false,msg: "This Blog ID Doesn't Exist"})
-           let updatedBlogData = await blogModel.findByIdAndUpdate
-           (
-             blogId,
-             {$set:{
-               ...req.body,
-               isPublished: true,
-               publishedAt : moment().format() //inserting date with moment library
-               }},
-             {new:true}
-           )
-           res.status(200).send(updatedBlogData)
+           if(blogIDExist.isDeleted==true) res.status(404).send({status:false,msg: "This Blog ID Doesn't Exist"})
+           if("tags" in req.body || "subcategory" in req.body){
+             await blogModel.findByIdAndUpdate(
+               blogId,
+               {$push:{tags:tags,subcategory:subcategory}},
+               {new:true}
+             )
+           }
+           if(blogIDExist.isPublished==false)
+           {
+               let updatedBlogData = await blogModel.findByIdAndUpdate
+               (
+                 blogId,
+                 {$set:{
+                   title:title,
+                   body:body,
+                   isPublished : true,
+                   publishedAt : moment().format() //inserting date with moment library
+                   }},
+                 {new:true}
+               )
+               res.status(200).send({status:true,data:updatedBlogData})
+           }
+           else 
+           {
+             let updatedBlogData = await blogModel.findByIdAndUpdate
+               (
+                 blogId,
+                 {$set:{
+                   title:title,
+                   body:body
+                   }},
+                 {new:true}
+               )
+               res.status(200).send({status:true,data:updatedBlogData}) 
+           }
        }
        else 
        {
-              res.status(400).send({status:false,msg: "There is no Data in request's Body"})
+              res.status(400).send({status:false,msg:"There is no Data in request's Body"})
        }
     }
- catch
+ catch(err)
  {
-   res.status(404).send({status:false,msg:"Please Enter Correct Blog ID"})
+   res.status(500).send({status:false,msg:err.message})
  }
 }
-
 // delete blog
 
 const deleteByParams = async function (req, res) {

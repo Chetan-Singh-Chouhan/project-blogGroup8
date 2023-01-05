@@ -1,5 +1,4 @@
 const blogModel = require("../models/blogModel")
-const authorModel = require("../models/authorModel")
 const jwt = require("jsonwebtoken")
 const { isValidObjectId } = require("mongoose")
 
@@ -13,7 +12,7 @@ const authentication = async function(req,res,next){
     }
     catch(err){
         res.status(401).send("UnAuthenticated, Please Login First")
-    //    console.log("-->",err.message)
+   
     }
 }
 const authorization = async function(req,res,next){
@@ -23,7 +22,6 @@ const authorization = async function(req,res,next){
     if(!isValidObjectId(blogId)) 
         res.status(400).send("Please Enter Valid Object Id")
     let blogdata = await blogModel.findById(blogId)
-    console.log(blogdata)
     if(!blogdata) 
         res.status(404).send("Blog Data not Found")
     let decodedToken = jwt.verify(token,'myProject1SecretKey')

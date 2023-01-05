@@ -1,8 +1,6 @@
 const mongoose =require('mongoose')
 const ObjectID= mongoose.Schema.Types.ObjectID
 const blogsSchema = new mongoose.Schema({
-    
-
     title:{
         type:String,
         required: true
