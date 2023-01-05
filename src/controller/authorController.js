@@ -1,7 +1,7 @@
 const authorModel = require("../models/authorModel")
 const jwt = require("jsonwebtoken")
 const emailValidator = require("email-validator")
-let passwordValidator = require("password-validator")
+const passwordValidator = require("password-validator")
 
 const createAuthor = async function(req, res){
     let data = req.body
