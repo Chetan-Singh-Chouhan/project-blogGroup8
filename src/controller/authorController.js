@@ -1,5 +1,6 @@
 const authorModel = require("../models/authorModel")
 const jwt = require("jsonwebtoken")
+const emailValidator = require("email-validator")
 
 const createAuthor = async function(req, res){
     let data = req.body
@@ -11,14 +12,13 @@ const createAuthor = async function(req, res){
     if(!password) return res.status(400).send({status: false, msg:"password is required"})
 
     const validName = (/^[a-zA-Z_]{3,20}$/)
-    const validPassword = (/^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-].{5,15})$/)
-    const validEmail = (/^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[@.].{15,30})$/)
+    // const validPassword = (/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/)
 
     if(!validName.test(fname)) return res.status(400).send({status: false, msg: "Invalid firstname"})
     if(!validName.test(lname)) return res.status(400).send({status: false, msg: "Invalid lastname"})
     if(!(["Mr", "Mrs", "Miss"].includes(title))) return res.status(400).send({status: false, msg: "Can only use Mr, Mrs and Miss"})
-    if(!validEmail.test(email)) return res.status(400).send({status:false, msg:"Invalid Email"})
-    if(!validPassword.test(password)) return res.status(400).send({status: false, msg: "Invalid password"})
+    if(!emailValidator.validate(email)) return res.status(400).send({status:false, msg:"Invalid Email"})
+    // if(!validPassword.test(password)) return res.status(400).send({status: false, msg: "Invalid password"})
 
     let created = await authorModel.create(data)
     res.send({status: true, data: created})
@@ -29,7 +29,7 @@ const loginUser = async function(req, res){
     {
       userId: data._id
     },
-    "group-8-project-secret-key"
+    "projectsecretcode"
   )
   res.send({ status: true, data: token });
 }
