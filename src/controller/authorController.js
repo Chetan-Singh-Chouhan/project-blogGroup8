@@ -34,9 +34,15 @@ const loginAuthor = async function(req,res){
   if(isAuthorExist){
       let token = jwt.sign({authorId:isAuthorExist._id},'myProject1SecretKey')
       res.send({status:true,data:token})
+
+      res.setHeader("x-api-key", token);
+      res.status(200).send({token:token,message:"login success" });
   }
   else res.status(401).send("Your Email ID And Password are not valid")
 }
 
 module.exports.createAuthor = createAuthor
 module.exports.loginAuthor = loginAuthor
+
+
+

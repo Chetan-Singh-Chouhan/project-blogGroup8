@@ -42,7 +42,7 @@ const getblog = async function(req,res){
         })
       return res.status(200).send({ status: true,data:blogData})
     }
-    const blogData =await blogModel.find({$or:[{authorId:authorId},{category:category},{tags:tags},{subcategory:subcategory}]})
+    const blogData =await blogModel.find({$and:[{authorId:authorId},{category:category},{tags:tags},{subcategory:subcategory}]})
     if(!blogData) 
         return res.status(404).send({
           status: false,
@@ -117,7 +117,7 @@ const deleteByParams = async function (req, res) {
         if(!isValidObjectId(userId))
           return res.status(400).send({status:false,msg:" Please Enter Correct valid objectId"})
         let checkBlog = await blogModel.findById(userId)
-        if(!userId)
+        if(!checkBlog)
           return res.status(400).send({status:false,msg:"userId not found"})
         if (checkBlog.isDeleted == true)
           return res.status(404).send({ status:false,msg: "blog is already deleted...!" })
@@ -138,23 +138,42 @@ const deleteByParams = async function (req, res) {
 }
 
 
+
 const deleteByQuery = async function (req, res) {
   try {
+      let filterdata={isDeleted:false,authorId:req.authorId}
+      let {category,subcategory,tags,authorId} = req.query
 
-      let data = req.query
-      //console.log(data)
-      let checkBlog = await blogModel.findOne(data)
+      if(authorId){
+        if(!isValidObjectId(req.query.authorId))
+        return res.status(400).send({status:false,message:"Please Enter Correct valid authorId"})
+        else
+        filterdata.authorId=authorId
+      }
+
+      if(category){
+        filterdata.category=category
+      }
+
+      if(subcategory){
+        filterdata.subcategory=subcategory
+      }
+
+      if(tags){
+        filterdata.tags=tags
+      }
+      let checkBlog = await blogModel.findOne(filterdata)
 
       if(!checkBlog)
         return res.status(404).send({status:false,msg:"Data is nomatching"})
+      
+      if(checkBlog.authorId._id.toString()!==req.authorId)
+         return res.status(401).send({status:false,msg:"Authorisation failed"})
 
-      if (checkBlog.isDeleted == true)
-          return res.status(400).send({ status: false, msg: "blog is already deleted" })
-
-          let deleteBlog = await blogModel.findOneAndUpdate(
-               data,
+      let deleteBlog = await blogModel.updateOne(
+              filterdata,
               { $set: { isDeleted: true, deletedAt: new Date() } },
-              { new: true,upsert:true}
+              { new: true}
           );
 
          return res.status(200).send({ status: true, data: deleteBlog })
@@ -168,7 +187,7 @@ const deleteByQuery = async function (req, res) {
 
 
 module.exports.getblog=getblog
-module.exports.createblog = createblog 
+module.exports.createblog=createblog 
 module.exports.deleteByParams=deleteByParams
-module.exports.updateBlogData = updateBlogData
+module.exports.updateBlogData=updateBlogData
 module.exports.deleteByQuery=deleteByQuery
